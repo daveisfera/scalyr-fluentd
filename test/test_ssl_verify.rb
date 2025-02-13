@@ -67,8 +67,8 @@ class SSLVerifyTest < Scalyr::ScalyrOutTest
   end
 
   def test_bad_system_ssl_certificates
-    `sudo mv #{OpenSSL::X509::DEFAULT_CERT_FILE} /tmp/system_cert.pem`
-    `sudo mv #{OpenSSL::X509::DEFAULT_CERT_DIR} /tmp/system_certs`
+    `mv #{OpenSSL::X509::DEFAULT_CERT_FILE} /tmp/system_cert.pem`
+    `mv #{OpenSSL::X509::DEFAULT_CERT_DIR} /tmp/system_certs`
 
     begin
       d = create_driver %(
@@ -85,8 +85,8 @@ class SSLVerifyTest < Scalyr::ScalyrOutTest
         logger.should_receive(:warn).once.with(/discarding buffer/i)
       end
     ensure
-      `sudo mv /tmp/system_certs #{OpenSSL::X509::DEFAULT_CERT_DIR}`
-      `sudo mv /tmp/system_cert.pem #{OpenSSL::X509::DEFAULT_CERT_FILE}`
+      `mv /tmp/system_certs #{OpenSSL::X509::DEFAULT_CERT_DIR}`
+      `mv /tmp/system_cert.pem #{OpenSSL::X509::DEFAULT_CERT_FILE}`
     end
   end
 
@@ -98,10 +98,10 @@ class SSLVerifyTest < Scalyr::ScalyrOutTest
     end
     mock_host = "invalid.mitm.should.fail.test.agent.scalyr.com"
     etc_hosts_entry = "#{agent_scalyr_com_ip} #{mock_host}"
-    hosts_bkp = `sudo cat /etc/hosts`
+    hosts_bkp = `cat /etc/hosts`
     hosts_bkp = hosts_bkp.chomp
     # Add mock /etc/hosts entry and config scalyr_server entry
-    `echo "#{etc_hosts_entry}" | sudo tee -a /etc/hosts`
+    `echo "#{etc_hosts_entry}" | tee -a /etc/hosts`
 
     begin
       d = create_driver %(
@@ -120,8 +120,8 @@ class SSLVerifyTest < Scalyr::ScalyrOutTest
       end
     ensure
       # Clean up the hosts file
-      `sudo truncate -s 0 /etc/hosts`
-      `echo "#{hosts_bkp}" | sudo tee -a /etc/hosts`
+      `truncate -s 0 /etc/hosts`
+      `echo "#{hosts_bkp}" | tee -a /etc/hosts`
     end
   end
 end
